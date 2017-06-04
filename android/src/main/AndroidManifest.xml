@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="ch.swissonid.barcodescanner"
+          android:versionCode="1"
+          android:versionName="0.0.1">
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="25"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application>
+        <activity android:name=".BarcodeScannerActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+    </application>
+
+</manifest>

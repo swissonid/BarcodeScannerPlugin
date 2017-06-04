@@ -1,0 +1,11 @@
+name: barcodescanner
+description: A new flutter plugin project.
+
+flutter:
+  plugin:
+    androidPackage: ch.swissonid.barcodescanner
+    pluginClass: BarcodescannerPlugin
+
+dependencies:
+  flutter:
+    sdk: flutter
