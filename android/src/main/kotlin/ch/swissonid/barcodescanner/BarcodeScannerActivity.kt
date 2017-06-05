@@ -3,21 +3,24 @@ package ch.swissonid.barcodescanner
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
+import android.support.annotation.LayoutRes
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
 
 class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, OnRequestPermissionsResultCallback {
-    private val  REQUEST_CAMERA = 112
+    private val REQUEST_CAMERA = 112
+    private var alreadyAsked = false
     private lateinit var mScannerView: ZXingScannerView
+    private lateinit var mContentViewGroup: ViewGroup
 
     fun setupToolbar() {
         val toolbar = findViewById(R.id.toolbar) as Toolbar
@@ -46,38 +49,60 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
 
     override fun onResume() {
         super.onResume()
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-            requestCameraPermission()
+        if(alreadyAsked) { return }
+        if(hasNotCameraPermission()){
+            requestCameraPermission(REQUEST_CAMERA, {this.onRational()})
         } else {
             startCamera()
         }
     }
 
-
-
-
-
-    private fun requestCameraPermission() {
-
-        // BEGIN_INCLUDE(camera_permission_request)
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.CAMERA)) {
-            // Provide an additional rationale to the user if the permission was not granted
-            // and the user would benefit from additional context for the use of the permission.
-            // For example if the user has previously denied the permission.
-
-            Toast.makeText(this, "bla",Toast.LENGTH_SHORT).show()
-        } else {
-
-            // Camera permission has not been granted yet. Request it directly.
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),
-                    REQUEST_CAMERA)
-        }
-        // END_INCLUDE(camera_permission_request)
+    fun onCameraPermissionDenied(){
+        finish()
     }
 
+    fun onCameraNeverAskAgain() {
+        replaceContentView(R.layout.view_permission_not_granted)
+        val button = findViewById(R.id.button) as Button
+        button.text = "Open Permission Settings"
+        button.setOnClickListener {
+            this.alreadyAsked = false
+            openPermissionSettings()
+        }
+    }
+
+    fun onRational() {
+        //TODO Start - move it to it's own widget
+        replaceContentView(R.layout.view_permission_not_granted)
+        val button = findViewById(R.id.button) as Button
+        button.setOnClickListener { this.requestCameraPermission(REQUEST_CAMERA) }
+        //TODO END - move it to it's own widget
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when(requestCode){
+            REQUEST_CAMERA -> {
+                alreadyAsked = true
+                handlePermission(grantResults)
+            }
+            else -> { return }
+        }
+    }
+
+    private fun handlePermission(grantResults: IntArray) {
+        if (verifyPermissions(grantResults)) {
+            startCamera()
+        } else {
+            if (!shouldShowRational(Manifest.permission.CAMERA)) {
+                onCameraNeverAskAgain()
+            } else {
+                onCameraPermissionDenied()
+            }
+        }
+    }
 
     private fun startCamera() {
+        replaceContentView(mScannerView)
         mScannerView.setResultHandler(this)
         mScannerView.startCamera()
     }
@@ -86,18 +111,26 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_simple_scanner)
         setupToolbar()
-        val viewGroup = findViewById(R.id.content_frame) as ViewGroup
-        mScannerView =  ZXingScannerView(this)
-        viewGroup.addView(mScannerView)
+        mContentViewGroup = findViewById(R.id.content_frame) as ViewGroup
+        mScannerView = ZXingScannerView(this)
+        mScannerView.id = R.id.scanner_preview
+    }
+
+    private fun replaceContentView(view: View) {
+        if(mContentViewGroup.childCount > 0){
+            mContentViewGroup.removeAllViews()
+        }
+        mContentViewGroup.addView(view)
+    }
+
+    private fun replaceContentView(@LayoutRes layoutId: Int) {
+        val newView = layoutInflater.inflate(layoutId,mContentViewGroup,false)
+        replaceContentView(newView)
     }
 
     override fun onPause() {
         mScannerView.stopCamera()
         super.onPause()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     companion object {

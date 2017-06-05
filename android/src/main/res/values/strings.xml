@@ -1,2 +1,4 @@
 <resources>
+    <string name="grant_button">Ask again</string>
+    <string name="rational_text">Some rational text</string>
 </resources>

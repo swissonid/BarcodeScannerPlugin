@@ -1,5 +1,5 @@
-group 'ch.swissonid.barcodescanner'
-version '1.0-SNAPSHOT'
+group "$GROUP_ID"
+version "$VERSION"
 
 buildscript {
     repositories {
@@ -28,6 +28,9 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        main.java.srcDirs += "${buildDir.absolutePath}/generated/source/kapt"
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -38,17 +41,21 @@ android {
 }
 
 dependencies {
-    compile 'org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4'
-    compile 'me.dm7.barcodescanner:zxing:1.9.3'
-    compile "com.android.support:support-core-utils:25.3.1"
-    compile "com.android.support:support-compat:25.3.1"
-    compile "com.android.support:design:25.3.1"
-    compile "com.android.support:appcompat-v7:25.3.1"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$KOTLIN_VERSION"
+    compile "me.dm7.barcodescanner:zxing:$ZXING_VSRION"
+    compile "com.android.support:support-core-utils:$SUPPORTLIB_VERSION"
+    compile "com.android.support:support-compat:$SUPPORTLIB_VERSION"
+    compile "com.android.support:design:$SUPPORTLIB_VERSION"
+    compile "com.android.support:appcompat-v7:$SUPPORTLIB_VERSION"
+    compile "com.android.support:support-annotations:$SUPPORTLIB_VERSION"
+    compile "com.android.support.constraint:constraint-layout:$CONSTRAIN_VERSION"
 
-    //Third party
-    compile('com.github.hotchemi:permissionsdispatcher:2.4.0') {
-        // we don't use android.app.Fragment you can exclude support for them
-        exclude module: "support-v13"
-    }
-    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.4.0'
+
+    androidTestCompile "com.android.support.test:runner:$RULES_RUNNER_VERSION"
+    androidTestCompile "com.android.support.test:rules:$RULES_RUNNER_VERSION"
+    androidTestCompile "com.android.support.test.espresso:espresso-core:$ESSPRESSO_VERSION"
+    androidTestCompile "com.android.support.test.espresso:espresso-intents:$ESSPRESSO_VERSION"
+    androidTestCompile "com.android.support:support-annotations:$SUPPORTLIB_VERSION"
+    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 }
+
