@@ -1,14 +1,5 @@
 package ch.swissonid.barcodescanner
 
-import android.Manifest
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.provider.Settings
-import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AppCompatActivity
-
 /*
  * Copyright (C) 2017 Patrice Müller.
  *
@@ -25,37 +16,45 @@ import android.support.v7.app.AppCompatActivity
  * limitations under the License.
  */
 
-fun AppCompatActivity.hasCameraPermission(): Boolean {
-    return ActivityCompat
-            .checkSelfPermission(this, Manifest.permission.CAMERA)== PackageManager.PERMISSION_GRANTED
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
+import android.support.v4.app.ActivityCompat
+import android.support.v7.app.AppCompatActivity
+
+private const val ANDROID_M = 23
+
+fun Activity.hasPermission(permission: String): Boolean {
+    if(android.os.Build.VERSION.SDK_INT < ANDROID_M) return true
+    return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 }
 
-fun AppCompatActivity.hasNotCameraPermission(): Boolean {
-    return !this.hasCameraPermission()
+fun Activity.hasPermissionNot(permission: String): Boolean {
+    return !this.hasPermission(permission)
 }
 
-fun AppCompatActivity.shouldShowRational(permission: String): Boolean {
+fun Activity.shouldShowRational(permission: String): Boolean {
    return ActivityCompat.shouldShowRequestPermissionRationale(this,
             permission)
 }
 
-fun AppCompatActivity.requestCameraPermission(permissionRequest: Int, handleRational: () -> Unit) {
-    if(shouldShowRational(Manifest.permission.CAMERA)){
-        handleRational()
-    }else {
-        requestCameraPermission(permissionRequest)
-    }
-}
-
-fun AppCompatActivity.requestCameraPermission(permissionRequest: Int) {
+fun Activity.requestCameraPermission(permissionRequest: Int) {
     ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),
             permissionRequest)
 }
 
+/**
+ * Checks all given permissions haven been granted
+ *
+ * @param grantResults the result of the requested permissions
+ * @return returns true if all permission have been granted other wise false.
+ */
 fun verifyPermissions(grantResults: IntArray): Boolean {
-    if (grantResults.isEmpty()) {
-        return false
-    }
+    if (grantResults.isEmpty()) return false
     return grantResults.none { it != PackageManager.PERMISSION_GRANTED }
 }
 

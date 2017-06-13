@@ -31,13 +31,11 @@ val TEXT_NEVER_ASK_AGAIN = "Don't ask again"
 val TEXT_PERMISSIONS = "Permissions"
 
 fun UiDevice.denyCurrentPermission() {
-    val denyButton = this.findObject(UiSelector().text(TEXT_DENY))
-    denyButton.click()
+    this.findObject(UiSelector().text(TEXT_DENY)).click()
 }
 
 fun UiDevice.allowCurrentPermission() {
-    val denyButton = this.findObject(UiSelector().text(TEXT_ALLOW))
-    denyButton.click()
+    this.findObject(UiSelector().text(TEXT_ALLOW)).click()
 }
 
 fun UiDevice.assertViewWithTextIsVisible(text: String) {

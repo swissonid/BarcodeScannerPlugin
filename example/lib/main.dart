@@ -48,7 +48,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _platformVersion = 'Unknown';
+  String _errorCode = "";
+  String _message = "";
 
   @override
   initState() {
@@ -58,48 +59,134 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-    String platformVersion;
+    String initMessage;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await Barcodescanner.platformVersion;
+      initMessage = "Didn't call yet anything";
     } on PlatformException {
-      platformVersion = "Failed to get platform version";
+      initMessage = "Failed to get platform version";
     }
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
-    if (!mounted)
-      return;
+    if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _message = initMessage;
     });
   }
 
   _scanBarcode() async {
     String barcode;
     try {
-      barcode = await Barcodescanner.scanBarcode;
-    } on PlatformException {
-      barcode = "Could not scann barcode";
+      barcode = await BarcodeScanner.scanBarcode;
+    } on PlatformException catch (exception) {
+      barcode = handleBarcodeScannerExcpetion(exception);
     }
-    if (!mounted)
+    if (!mounted) {
       return;
+    }
 
     setState(() {
-      _platformVersion = barcode;
+      _message = barcode;
     });
+  }
+
+  String handleBarcodeScannerExcpetion(PlatformException exception) {
+    var message = "";
+    var errorCode = exception.code;
+    switch (exception.code) {
+      case BarcodeScanner.errorCameraShowRational:
+        message = "We need permission to camera to scann the barcode";
+        break;
+      case BarcodeScanner.errorCodePermissionDenied:
+        message = "Permission Denied";
+        break;
+      case BarcodeScanner.errorCodePermissionDeniedNeverAskAgain:
+        message = "Do not show it again please";
+        break;
+      case BarcodeScanner.errorScanningCanceled:
+        message = "Scanning canceld";
+        break;
+      default:
+        errorCode = "";
+        message = "Deafult ....";
+    }
+    _errorCode = errorCode;
+    return message;
+  }
+
+  _requestPermission() async {
+    try {
+      await BarcodeScanner.requestPermission;
+    } on PlatformException catch (exception) {
+      var message = handleBarcodeScannerExcpetion(exception);
+      setState(() {
+        _message = message;
+      });
+    }
+  }
+
+  _openPermissionSettings() async {
+    try {
+      await BarcodeScanner.openPermissionSettings;
+    } on PlatformException catch (exception) {
+      var message = handleBarcodeScannerExcpetion(exception);
+      setState(() {
+        _message = message;
+      });
+    }
+  }
+
+  Widget _getWidget() {
+    var widgets = new List<Widget>();
+    widgets.add(new Container(
+      padding: const EdgeInsets.all(8.0),
+      child: new Text(_message),
+    ));
+    switch (_errorCode) {
+      case BarcodeScanner.errorCameraShowRational:
+        widgets.add(new RaisedButton(
+            child: new Text("Request Permissions Again"),
+            onPressed: _requestPermission));
+        break;
+      case BarcodeScanner.errorCodePermissionDenied:
+      case BarcodeScanner.errorCodePermissionDeniedNeverAskAgain:
+        widgets.add(new RaisedButton(
+            child: new Text("Open Permission Settings"),
+            onPressed: _openPermissionSettings));
+        break;
+      default:
+        break;
+    }
+
+    return new Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        new Expanded(
+            child: new Column(
+          children: <Widget>[
+            new Expanded(
+                child: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: widgets,
+            ))
+          ],
+        ))
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Plugin example app'),
+        title: new Text('BarcodeScannerPlugin example '),
       ),
-      floatingActionButton: new FloatingActionButton(child: new Icon(Icons.flip), onPressed: _scanBarcode),
-      body: new Center(child: new Text('Running on: $_platformVersion\n')),
+      floatingActionButton: new FloatingActionButton(
+          child: new Icon(Icons.flip), onPressed: _scanBarcode),
+      body: _getWidget(),
     );
   }
 }
