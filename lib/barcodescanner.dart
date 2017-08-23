@@ -8,7 +8,13 @@ class Barcodescanner {
 
   static Future<String> get platformVersion =>
       _channel.invokeMethod('getPlatformVersion');
-  
-  static Future<String> get scanBarcode =>
-      _channel.invokeMethod("scanBarcode");
+
+  static Future<Map<String,dynamic>> get scanBarcode async{
+    String barcodeData = await _channel.invokeMethod("scanBarcode");
+    return {
+      'barcode': barcodeData.split('||')[0],
+      'barcodeFormat': barcodeData.split('||')[1]
+    };
+  }
+
 }
