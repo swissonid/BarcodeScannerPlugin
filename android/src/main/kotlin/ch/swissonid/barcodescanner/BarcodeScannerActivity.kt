@@ -16,7 +16,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView
 
 
 class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, OnRequestPermissionsResultCallback {
-    private val  REQUEST_CAMERA = 112
+    private val REQUEST_CAMERA = 112
     private lateinit var mScannerView: ZXingScannerView
 
     fun setupToolbar() {
@@ -26,15 +26,16 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
     }
 
     override fun handleResult(rawResult: Result) {
-        Toast.makeText(this, "Contents = ${rawResult.text} Format = ${rawResult.barcodeFormat}"
-                        , Toast.LENGTH_SHORT).show()
-        finishWithResult(rawResult)
+        if(rawResult != null) {
+          //val text = "Contents = ${rawResult.text} Format = ${rawResult.barcodeFormat}"
+          //Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+          finishWithResult(rawResult)
+        }
         // Note:
         // * Wait 2 seconds to resume the preview.
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
-        // * I don't know why this is the case but I don't have the time to figure out.
-       /* val handler = Handler()
-        handler.postDelayed( { mScannerView.resumeCameraPreview(BarcodeScannerActivity@this) }, 2000)*/
+        // * I don"t know why this is the case but I don"t have the time to figure out.
+       //Handler().postDelayed( { mScannerView.resumeCameraPreview(BarcodeScannerActivity@this) }, 2000)
     }
 
     private fun finishWithResult(rawResult: Result) {
@@ -42,6 +43,7 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         resultIntent.putExtra("text", rawResult.text)
         resultIntent.putExtra("barcodeFormat", rawResult.barcodeFormat.toString())
         setResult(Activity.RESULT_OK, resultIntent)
+        this.finish()
     }
 
     override fun onResume() {
@@ -52,10 +54,6 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
             startCamera()
         }
     }
-
-
-
-
 
     private fun requestCameraPermission() {
 
@@ -70,8 +68,7 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         } else {
 
             // Camera permission has not been granted yet. Request it directly.
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),
-                    REQUEST_CAMERA)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA)
         }
         // END_INCLUDE(camera_permission_request)
     }
@@ -98,13 +95,5 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    companion object {
-        @JvmStatic
-        fun start(activity: Activity){
-            val barcodeActivity = Intent(activity, BarcodeScannerActivity::class.java)
-            activity.startActivity(barcodeActivity)
-        }
     }
 }
