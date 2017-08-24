@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       barcode = await Barcodescanner.scanBarcode;
     } on PlatformException {
-      barcode = "Could not scann barcode";
+      barcode = "Could not scan barcode";
     }
     if (!mounted)
       return;
