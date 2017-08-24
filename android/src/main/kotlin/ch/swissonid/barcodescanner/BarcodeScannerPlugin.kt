@@ -39,10 +39,10 @@ class BarcodeScannerPlugin private constructor(activity: Activity) : MethodCallH
     }
 
     //Called after result is set and finish() is called in activity
-    override fun onActivityResult(requestCode: Int, resultCode: Int, barcodeData: Intent) :Boolean {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, barcodeData: Intent?) :Boolean {
         if (requestCode == SCAN_BARCODE) {
-          // the barcode was scanned properly.
-            if (resultCode == Activity.RESULT_OK) {
+            // the barcode was scanned properly.
+            if (resultCode == Activity.RESULT_OK && barcodeData != null) {
                 val barcodeValue = barcodeData.getStringExtra("text")
                 val barcodeFormat = barcodeData.getStringExtra("barcodeFormat")
                 //Pseudo-serialize BarcodeScanner
