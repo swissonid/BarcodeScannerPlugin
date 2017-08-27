@@ -146,12 +146,13 @@ class _MyHomePageState extends State<MyHomePage> {
       child: new Text(_message),
     ));
     switch (_errorCode) {
+      case BarcodeScanner.errorCodePermissionDenied:
       case BarcodeScanner.errorCameraShowRational:
         widgets.add(new RaisedButton(
             child: new Text("Request Permissions Again"),
             onPressed: _requestPermission));
         break;
-      case BarcodeScanner.errorCodePermissionDenied:
+
       case BarcodeScanner.errorCodePermissionDeniedNeverAskAgain:
         widgets.add(new RaisedButton(
             child: new Text("Open Permission Settings"),

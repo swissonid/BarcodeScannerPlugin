@@ -26,7 +26,7 @@ class BarcodescannerPlugin private constructor(activity: Activity) : MethodCallH
 
     companion object {
         @JvmStatic
-        fun registerWith(registrar: Registrar): Unit {
+        fun registerWith(registrar: Registrar) {
             val channel = MethodChannel(registrar.messenger(), "barcodescanner")
             val barcodeScannerPlugin = BarcodescannerPlugin(registrar.activity())
             channel.setMethodCallHandler(barcodeScannerPlugin)
@@ -35,7 +35,7 @@ class BarcodescannerPlugin private constructor(activity: Activity) : MethodCallH
         }
     }
 
-    override fun onMethodCall(call: MethodCall, result: Result): Unit {
+    override fun onMethodCall(call: MethodCall, result: Result) {
         mResult = result
         when(call.method) {
             "hasCameraPermission" -> { result.success(mActivity.hasPermission(CAMERA_PERMISSION)) }

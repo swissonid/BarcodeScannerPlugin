@@ -1,5 +1,6 @@
 package ch.swissonid.barcodescanner
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +11,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import permissions.dispatcher.NeedsPermission
+import permissions.dispatcher.RuntimePermissions
 
+@RuntimePermissions(kotlin = true)
 class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
     private lateinit var mScannerView: ZXingScannerView
     private lateinit var mContentViewGroup: ViewGroup
@@ -47,7 +51,8 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         startCamera()
     }
 
-    private fun startCamera() {
+    @NeedsPermission(Manifest.permission.CAMERA)
+    internal fun startCamera() {
         replaceContentView(mScannerView)
         mScannerView.setResultHandler(this)
         mScannerView.startCamera()

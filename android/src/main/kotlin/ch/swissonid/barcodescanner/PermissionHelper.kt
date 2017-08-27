@@ -24,17 +24,12 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AppCompatActivity
 
 private const val ANDROID_M = 23
 
 fun Activity.hasPermission(permission: String): Boolean {
     if(android.os.Build.VERSION.SDK_INT < ANDROID_M) return true
     return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
-}
-
-fun Activity.hasPermissionNot(permission: String): Boolean {
-    return !this.hasPermission(permission)
 }
 
 fun Activity.shouldShowRational(permission: String): Boolean {
