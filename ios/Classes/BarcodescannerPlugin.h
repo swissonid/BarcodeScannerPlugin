@@ -1,4 +1,6 @@
 #import <Flutter/Flutter.h>
 
-@interface BarcodescannerPlugin : NSObject<FlutterPlugin>
+@interface BarcodeScannerPlugin : NSObject<FlutterPlugin>
+@property (nonatomic, retain) UIViewController *viewController;
+
 @end

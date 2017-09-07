@@ -48,7 +48,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _platformVersion = 'Unknown';
+  var _platformVersion = 'Unknown';
 
   @override
   initState() {
@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _scanBarcode() async {
-    String barcode;
+    var barcode;
     try {
       barcode = await Barcodescanner.scanBarcode;
     } on PlatformException {

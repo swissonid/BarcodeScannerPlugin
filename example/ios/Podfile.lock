@@ -1,0 +1,22 @@
+PODS:
+  - barcodescanner (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - barcodescanner (from `/Users/emvolution/Desktop/dev/BarcodeScannerPlugin/ios`)
+  - Flutter (from `/Users/emvolution/flutter/bin/cache/artifacts/engine/ios`)
+
+EXTERNAL SOURCES:
+  barcodescanner:
+    :path: /Users/emvolution/Desktop/dev/BarcodeScannerPlugin/ios
+  Flutter:
+    :path: /Users/emvolution/flutter/bin/cache/artifacts/engine/ios
+
+SPEC CHECKSUMS:
+  barcodescanner: d95c62e7687d3bec67c7869f0d0b9d627bcc3312
+  Flutter: d674e78c937094a75ac71dd77e921e840bea3dbf
+
+PODFILE CHECKSUM: 1003743f06ec24ad436e3271b83a8ca2bee2fed4
+
+COCOAPODS: 1.2.1
