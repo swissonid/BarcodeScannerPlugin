@@ -1,7 +1,11 @@
 PODS:
   - barcodescanner (0.0.1):
     - Flutter
+    - ZXingObjC
   - Flutter (1.0.0)
+  - ZXingObjC (3.2.1):
+    - ZXingObjC/All (= 3.2.1)
+  - ZXingObjC/All (3.2.1)
 
 DEPENDENCIES:
   - barcodescanner (from `/Users/emvolution/Desktop/dev/BarcodeScannerPlugin/ios`)
@@ -14,8 +18,9 @@ EXTERNAL SOURCES:
     :path: /Users/emvolution/flutter/bin/cache/artifacts/engine/ios
 
 SPEC CHECKSUMS:
-  barcodescanner: d95c62e7687d3bec67c7869f0d0b9d627bcc3312
+  barcodescanner: ec85eede10cc612d809a0b08e7deceefc5fade31
   Flutter: d674e78c937094a75ac71dd77e921e840bea3dbf
+  ZXingObjC: bbf7b8f0cf8933fdd33eb4f9f46e22308552869b
 
 PODFILE CHECKSUM: 1003743f06ec24ad436e3271b83a8ca2bee2fed4
 

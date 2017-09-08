@@ -1,4 +1,5 @@
 #import "BarcodeScannerPlugin.h"
+#import "ViewController.h"
 
 static NSString *const CHANNEL_NAME = @"barcodescanner";
 
@@ -22,7 +23,7 @@ static NSString *const CHANNEL_NAME = @"barcodescanner";
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([@"scanBarcode" isEqualToString:call.method]) {
-        //[self showBarcodeScanner:call];
+        [self showBarcodeScanner:call];
         //result(nil);
         result(@"1234567891234||gtin");
     } else if ([@"getPlatformVersion" isEqualToString:call.method]){
@@ -32,4 +33,14 @@ static NSString *const CHANNEL_NAME = @"barcodescanner";
         result(FlutterMethodNotImplemented);
     }
 }
+
+- (void)showBarcodeScanner:(FlutterMethodCall*)call {
+    NSString *bundlePath = [[NSBundle bundleForClass:[ViewController class]]
+                            pathForResource:@"flutter_barcodescanner" ofType:@"bundle"];
+    
+    NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+    ViewController *scannerViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:bundle];
+    [self.viewController presentViewController:scannerViewController animated:YES completion:nil];
+}
+
 @end
