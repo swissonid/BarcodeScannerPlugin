@@ -11,9 +11,7 @@ import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
 import io.flutter.plugin.common.PluginRegistry.Registrar
 
-private const val REQUEST_CAMERA_PERMISSION = 32
-private const val BARCODE_REQUEST_CODE = 123
-private const val CAMERA_PERMISSION = Manifest.permission.CAMERA
+internal const val BARCODE_REQUEST_CODE = 123
 private const val ERROR_CAMERA_PERMISSION_DENIED = "PERMISSION_DENIED"
 private const val ERROR_CAMERA_PERMISSION_DENIED_NEVER_ASK_AGAIN = "NEVER_ASK_AGAIN"
 private const val ERROR_SCANNING_CANCELED = "SCANNING_CANCELED"
@@ -21,7 +19,7 @@ private const val ERROR_CAMERA_SHOW_RATIONAL = "SHOW_RATIONAL"
 class BarcodescannerPlugin private constructor(activity: Activity) : MethodCallHandler, ActivityResultListener, PluginRegistry.RequestPermissionResultListener {
 
 
-    private val mActivity = activity
+    val mActivity = activity
     private lateinit var mResult: Result
 
     companion object {
@@ -38,24 +36,11 @@ class BarcodescannerPlugin private constructor(activity: Activity) : MethodCallH
     override fun onMethodCall(call: MethodCall, result: Result) {
         mResult = result
         when(call.method) {
-            "hasCameraPermission" -> { result.success(mActivity.hasPermission(CAMERA_PERMISSION)) }
-            "scanBarcode" -> { startBarcodeScanner(result) }
-            "requestCameraPermission" -> { mActivity.requestCameraPermission(REQUEST_CAMERA_PERMISSION) }
-            "openPermissionSettings" -> { mActivity.openPermissionSettings() }
+            "hasCameraPermission" -> { result.notImplemented() }
+            "scanBarcode" -> { startCameraWithCheck() }
+            "requestCameraPermission" -> { requestPersmission() }
+            "openPermissionSettings" -> { openPersmissionSettings() }
             else -> result.notImplemented()
-        }
-    }
-
-    fun startBarcodeScanner(result: Result) {
-        if(mActivity.hasPermission(CAMERA_PERMISSION)){
-            BarcodeScannerActivity.startForResult(mActivity, BARCODE_REQUEST_CODE)
-        }else {
-            if(mActivity.shouldShowRational(CAMERA_PERMISSION)){
-                result.onError(ERROR_CAMERA_SHOW_RATIONAL)
-            }
-            else {
-                mActivity.requestCameraPermission(REQUEST_CAMERA_PERMISSION)
-            }
         }
     }
 
@@ -76,27 +61,25 @@ class BarcodescannerPlugin private constructor(activity: Activity) : MethodCallH
      * @return true if the result has been handled.
      */
     override fun onRequestPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
-        when(requestCode) {
-            REQUEST_CAMERA_PERMISSION -> {
-                handleRequestResult(grantResults)
-                return true
+
+        return when(requestCode) {
+            REQUEST_STARTCAMERA -> {
+                onRequestPermissionsResult(REQUEST_STARTCAMERA, grantResults)
+                true
             }
-            else -> return false
+            else -> false
         }
     }
 
-    fun handleRequestResult(grantResults: IntArray){
-        if(verifyPermissions(grantResults)) {
-            BarcodeScannerActivity.startForResult(mActivity, REQUEST_CAMERA_PERMISSION)
-        }
-        else {
-            if(mActivity.shouldShowRational(CAMERA_PERMISSION)){
-                mResult.onError(ERROR_CAMERA_PERMISSION_DENIED_NEVER_ASK_AGAIN)
-            }
-            else {
-                mResult.onError(ERROR_CAMERA_PERMISSION_DENIED)
-            }
-        }
+    fun onCameraNeverAskAgain() {
+        mResult.onError(ERROR_CAMERA_PERMISSION_DENIED_NEVER_ASK_AGAIN)
+    }
 
+    fun onCameraDenied() {
+        mResult.onError(ERROR_CAMERA_PERMISSION_DENIED)
+    }
+
+    fun showRationaleForCamera() {
+        mResult.onError(ERROR_CAMERA_SHOW_RATIONAL)
     }
 }

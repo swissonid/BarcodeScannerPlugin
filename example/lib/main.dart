@@ -147,10 +147,14 @@ class _MyHomePageState extends State<MyHomePage> {
     ));
     switch (_errorCode) {
       case BarcodeScanner.errorCodePermissionDenied:
+        widgets.add(new Text("Permission denied"));
+        break;
       case BarcodeScanner.errorCameraShowRational:
-        widgets.add(new RaisedButton(
-            child: new Text("Request Permissions Again"),
-            onPressed: _requestPermission));
+        widgets.add(
+          new RaisedButton(
+            onPressed: _requestPermission,
+            child: new Text("Request Permissions Again"),)
+          );
         break;
 
       case BarcodeScanner.errorCodePermissionDeniedNeverAskAgain:
@@ -164,10 +168,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return new Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
+      children: [
         new Expanded(
             child: new Column(
-          children: <Widget>[
+          children: [
             new Expanded(
                 child: new Column(
               mainAxisAlignment: MainAxisAlignment.center,

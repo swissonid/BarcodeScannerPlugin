@@ -12,14 +12,12 @@ import android.widget.Toast
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import permissions.dispatcher.NeedsPermission
-import permissions.dispatcher.RuntimePermissions
 
-@RuntimePermissions(kotlin = true)
 class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
     private lateinit var mScannerView: ZXingScannerView
     private lateinit var mContentViewGroup: ViewGroup
 
-    fun setupToolbar() {
+    private fun setupToolbar() {
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -58,6 +56,7 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         mScannerView.startCamera()
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_simple_scanner)
@@ -79,6 +78,12 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         setResult(Activity.RESULT_CANCELED)
         super.onBackPressed()
     }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // NOTE: delegate the permission handling to generated method
+    }
+
 
     companion object {
         @JvmStatic

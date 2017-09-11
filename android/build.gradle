@@ -58,7 +58,7 @@ dependencies {
         // if you don't use android.app.Fragment you can exclude support for them
         exclude module: "support-v13"
     }
-    kapt "com.github.hotchemi:permissionsdispatcher-processor:$PERMISSIONSDISPATCHER_VERSION"
+    //kapt "com.github.hotchemi:permissionsdispatcher-processor:$PERMISSIONSDISPATCHER_VERSION"
 
 
     androidTestCompile "com.android.support.test:runner:$RULES_RUNNER_VERSION"
