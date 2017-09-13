@@ -5,6 +5,7 @@ static NSString *const CHANNEL_NAME = @"barcodescanner";
 @implementation BarcodeScannerPlugin
 
 - (void)addItemViewController:(ViewController *)controller didFinishEnteringItem:(NSString *)item {
+    //return results to dart interface
     self.resultCallback(item);
 }
 
@@ -44,7 +45,8 @@ static NSString *const CHANNEL_NAME = @"barcodescanner";
 
 - (void)showBarcodeScanner:(FlutterMethodCall*)call {
     
-    //TODO: Find a way to load a default view
+    //TODO: Find a way to load a default view and also allow user to specify a custom view
+    //load bundle created through barcodescanner.podspec
     NSString *bundlePath = [[NSBundle bundleForClass:[ViewController class]]
                             pathForResource:@"flutter_barcodescanner" ofType:@"bundle"];
     
@@ -57,6 +59,9 @@ static NSString *const CHANNEL_NAME = @"barcodescanner";
     self.scannerViewController.title = @"Barcode Scanner";
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.scannerViewController];
+    
+    //manually set backButton from image,because I am apparently
+    //too stupid to get that back arrow working with the regular function -.-
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"flutter_barcodescanner.bundle/Icon-Back"]
                                                                    style:UIBarButtonItemStylePlain
                                                                   target:self
@@ -67,7 +72,6 @@ static NSString *const CHANNEL_NAME = @"barcodescanner";
     navigationController.navigationBar.userInteractionEnabled = YES;
     navigationController.navigationBar.tintColor = [UIColor blackColor];
 
-    
     
     //Draw simple red scanner line
     double padding = self.scannerViewController.view.bounds.size.width / 4;

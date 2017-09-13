@@ -201,13 +201,15 @@
     
     CGAffineTransform inverse = CGAffineTransformInvert(_captureSizeTransform);
     
-    // We got a result. Display information about the result onscreen.
     NSString *formatString = [self barcodeFormatToString:result.barcodeFormat];
 
     // Vibrate
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     
+    //create proper "barcode||type" format for dart api
     NSString *scanResult =[NSString stringWithFormat:@"%@||%@", result.text, formatString];
+    
+    //return results to BarcodeScannerPlugin
     [self.delegate addItemViewController:self didFinishEnteringItem:scanResult];
     [self.capture stop];
     [self dismissViewControllerAnimated:YES completion:Nil];
