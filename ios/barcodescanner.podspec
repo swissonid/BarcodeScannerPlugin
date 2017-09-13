@@ -6,11 +6,11 @@ Pod::Spec.new do |s|
   s.version          = '0.0.1'
   s.summary          = 'A new flutter plugin project.'
   s.description      = <<-DESC
-A new flutter plugin project.
+A very simple flutter plugin to scan barcodes and qr codes
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/swissonid/BarcodeScannerPlugin'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Benjamin Sauer' => 'ben@emvolution.me' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
@@ -18,7 +18,8 @@ A new flutter plugin project.
   s.dependency 'ZXingObjC'
 
   s.resource_bundles = {
-      'flutter_barcodescanner' => ['Pod/**/*.xib']
+      'flutter_barcodescanner' => ['Assets/**/*.xib', 'Assets/**/*.png']
   }
+
   s.ios.deployment_target = '8.0'
 end

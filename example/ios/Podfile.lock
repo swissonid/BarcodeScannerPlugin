@@ -18,7 +18,7 @@ EXTERNAL SOURCES:
     :path: /Users/emvolution/flutter/bin/cache/artifacts/engine/ios
 
 SPEC CHECKSUMS:
-  barcodescanner: ec85eede10cc612d809a0b08e7deceefc5fade31
+  barcodescanner: a07c090346d61f50c250c49f63ce366d07617586
   Flutter: d674e78c937094a75ac71dd77e921e840bea3dbf
   ZXingObjC: bbf7b8f0cf8933fdd33eb4f9f46e22308552869b
 

@@ -16,6 +16,18 @@
 
 #import <ZXingObjC/ZXingObjC.h>
 
+@class BarcodeScannerViewController;
+
+@protocol BarcodeScannerPluginDelegate <NSObject>
+- (void)addItemViewController:(BarcodeScannerViewController *)controller didFinishEnteringItem:(NSString *)item;
+@end
+
 @interface ViewController : UIViewController <ZXCaptureDelegate>
+
+@property (nonatomic, weak) id <BarcodeScannerPluginDelegate> delegate;
+@property (nonatomic, strong) ZXCapture *capture;
+@property (strong, nonatomic) IBOutlet UIView *view;
+@property (nonatomic, weak) IBOutlet UIView *scanRectView;
+@property (nonatomic, weak) IBOutlet UILabel *decodedLabel;
 
 @end

@@ -15,19 +15,13 @@
  */
 
 #import <AudioToolbox/AudioToolbox.h>
-#import "ViewController.h"
-
-@interface ViewController ()
-
-@property (nonatomic, strong) ZXCapture *capture;
-@property (nonatomic, weak) IBOutlet UIView *scanRectView;
-@property (nonatomic, weak) IBOutlet UILabel *decodedLabel;
-
-@end
+#import "BarcodeScannerViewController.h"
 
 @implementation ViewController {
     CGAffineTransform _captureSizeTransform;
 }
+
+@synthesize delegate;
 
 #pragma mark - View Controller Methods
 
@@ -206,31 +200,17 @@
     if (!result) return;
     
     CGAffineTransform inverse = CGAffineTransformInvert(_captureSizeTransform);
-    NSMutableArray *points = [[NSMutableArray alloc] init];
-    NSString *location = @"";
-    for (ZXResultPoint *resultPoint in result.resultPoints) {
-        CGPoint cgPoint = CGPointMake(resultPoint.x, resultPoint.y);
-        CGPoint transformedPoint = CGPointApplyAffineTransform(cgPoint, inverse);
-        transformedPoint = [self.scanRectView convertPoint:transformedPoint toView:self.scanRectView.window];
-        NSValue* windowPointValue = [NSValue valueWithCGPoint:transformedPoint];
-        location = [NSString stringWithFormat:@"%@ (%f, %f)", location, transformedPoint.x, transformedPoint.y];
-        [points addObject:windowPointValue];
-    }
-    
     
     // We got a result. Display information about the result onscreen.
     NSString *formatString = [self barcodeFormatToString:result.barcodeFormat];
-    NSString *display = [NSString stringWithFormat:@"Scanned!\n\nFormat: %@\n\nContents:\n%@\nLocation: %@", formatString, result.text, location];
-    [self.decodedLabel performSelectorOnMainThread:@selector(setText:) withObject:display waitUntilDone:YES];
-    
+
     // Vibrate
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     
+    NSString *scanResult =[NSString stringWithFormat:@"%@||%@", result.text, formatString];
+    [self.delegate addItemViewController:self didFinishEnteringItem:scanResult];
     [self.capture stop];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        [self.capture start];
-    });
+    [self dismissViewControllerAnimated:YES completion:Nil];
 }
 
 @end

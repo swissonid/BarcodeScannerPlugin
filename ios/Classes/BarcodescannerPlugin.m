@@ -1,9 +1,13 @@
 #import "BarcodeScannerPlugin.h"
-#import "ViewController.h"
 
 static NSString *const CHANNEL_NAME = @"barcodescanner";
 
 @implementation BarcodeScannerPlugin
+
+- (void)addItemViewController:(ViewController *)controller didFinishEnteringItem:(NSString *)item {
+    self.resultCallback(item);
+}
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
     FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName: CHANNEL_NAME
                                                                 binaryMessenger:[registrar messenger]];
@@ -22,10 +26,9 @@ static NSString *const CHANNEL_NAME = @"barcodescanner";
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
+    self.resultCallback = result;
     if ([@"scanBarcode" isEqualToString:call.method]) {
         [self showBarcodeScanner:call];
-        //result(nil);
-        result(@"1234567891234||gtin");
     } else if ([@"getPlatformVersion" isEqualToString:call.method]){
         NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
         result(currSysVer);
@@ -34,13 +37,50 @@ static NSString *const CHANNEL_NAME = @"barcodescanner";
     }
 }
 
+- (IBAction)Back
+{
+    [self.scannerViewController dismissViewControllerAnimated:YES completion:nil]; // ios 6
+}
+
 - (void)showBarcodeScanner:(FlutterMethodCall*)call {
+    
+    //TODO: Find a way to load a default view
     NSString *bundlePath = [[NSBundle bundleForClass:[ViewController class]]
                             pathForResource:@"flutter_barcodescanner" ofType:@"bundle"];
     
     NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
-    ViewController *scannerViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:bundle];
-    [self.viewController presentViewController:scannerViewController animated:YES completion:nil];
+    
+    
+    self.scannerViewController = [[ViewController alloc] initWithNibName:@"BarcodeScannerViewController" bundle:bundle];
+    self.scannerViewController.delegate = self;
+
+    self.scannerViewController.title = @"Barcode Scanner";
+    
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.scannerViewController];
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"flutter_barcodescanner.bundle/Icon-Back"]
+                                                                   style:UIBarButtonItemStylePlain
+                                                                  target:self
+                                                                  action:@selector(Back)];
+    
+    [navigationController.navigationBar.topItem setLeftBarButtonItem: backButton];
+    
+    navigationController.navigationBar.userInteractionEnabled = YES;
+    navigationController.navigationBar.tintColor = [UIColor blackColor];
+
+    
+    
+    //Draw simple red scanner line
+    double padding = self.scannerViewController.view.bounds.size.width / 4;
+    double x = padding / 2;
+    double y = self.scannerViewController.view.bounds.size.height / 2;
+    double thickness = 2.5;
+    
+    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(x, y, self.scannerViewController.view.bounds.size.width - padding, thickness)];
+    lineView.backgroundColor = [UIColor redColor];
+    [self.scannerViewController.view addSubview:lineView];
+    
+    
+    [self.viewController presentModalViewController:navigationController animated:YES];
 }
 
 @end
