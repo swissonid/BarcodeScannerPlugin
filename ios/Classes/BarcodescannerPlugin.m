@@ -72,14 +72,17 @@ static NSString *const CHANNEL_NAME = @"barcodescanner";
     navigationController.navigationBar.userInteractionEnabled = YES;
     navigationController.navigationBar.tintColor = [UIColor blackColor];
 
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
     
     //Draw simple red scanner line
-    double padding = self.scannerViewController.view.bounds.size.width / 4;
-    double x = padding / 2;
-    double y = self.scannerViewController.view.bounds.size.height / 2;
+    double quarterWidth = screenWidth / 4;
+    double x = quarterWidth;
+    double y = screenHeight / 2;
     double thickness = 2.5;
     
-    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(x, y, self.scannerViewController.view.bounds.size.width - padding, thickness)];
+    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(x, y, quarterWidth * 2, thickness)];
     lineView.backgroundColor = [UIColor redColor];
     [self.scannerViewController.view addSubview:lineView];
     
